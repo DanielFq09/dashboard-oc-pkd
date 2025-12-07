@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard OC PKD • Rayon Adab dan Humaniora • Komisariat UINSA Surabaya</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      /* PMII palette */
+      --navy:#0B1B3A;
+      --navy2:#08122A;
+      --yellow:#FFCC00;
+      --yellow2:#FFE27A;
+
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.58);
+      --stroke: rgba(255,255,255,.16);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+
+      --r1: 22px;
+      --r2: 16px;
+      --gap: 16px;
+      --font: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+
+      --bgimg: none;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 15%, rgba(255,204,0,.14), transparent 60%),
+        radial-gradient(900px 600px at 80% 25%, rgba(0,160,255,.10), transparent 60%),
+        linear-gradient(180deg, var(--navy), var(--navy2));
+      overflow-x:hidden;
+    }
+
+    /* BG image + PMII overlay */
+    .bg{
+      position:fixed; inset:0;
+      background:
+        radial-gradient(1200px 700px at 25% 20%, rgba(255,204,0,.18), transparent 60%),
+        radial-gradient(900px 600px at 78% 25%, rgba(0,160,255,.12), transparent 62%),
+        linear-gradient(180deg, rgba(11,27,58,.74), rgba(8,18,42,.88)),
+        var(--bgimg);
+      background-size:cover;
+      background-position:center;
+      filter:saturate(1.05) contrast(1.1);
+      transform:scale(1.03);
+      z-index:-4;
+    }
+    .pattern{
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(135deg, rgba(255,204,0,.12) 1px, transparent 1px),
+        linear-gradient(45deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 26px 26px;
+      opacity:.18;
+      mix-blend-mode:overlay;
+      pointer-events:none;
+      z-index:-3;
+    }
+    .grain{
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.20'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      opacity: .32;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    .wrap{ max-width: 1280px; margin:0 auto; padding: 22px 16px 44px; }
+
+    /* Header */
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap;
+      margin-bottom: 12px;
+    }
+    .brand{ display:flex; gap:12px; align-items:center; min-width:280px; }
+    .logoBox{
+      width: 54px; height: 54px;
+      border-radius: 18px;
+      border:1px solid rgba(255,204,0,.40);
+      background: rgba(0,0,0,.22);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+      position:relative;
+    }
+    .logoBox::before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(42px 30px at 30% 20%, rgba(255,204,0,.18), transparent 60%);
+      pointer-events:none;
+    }
+    .logoBox img{
+      width: 78%; height: 78%;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
+    }
+    .brand h1{
+      margin:0;
+      font-size: clamp(18px, 2.4vw, 28px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      text-shadow: 0 10px 24px rgba(0,0,0,.45);
+    }
+    .badgeInline{
+      display:inline-block;
+      margin-left:10px;
+      vertical-align:middle;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,204,0,.40);
+      background: rgba(255,204,0,.10);
+      font-size:12px;
+      font-weight:950;
+      letter-spacing:.02em;
+      color: rgba(255,255,255,.90);
+    }
+    .brand p{ margin: 4px 0 0; color: var(--muted); font-size: 13px; font-weight:650; line-height:1.3; }
+
+    .actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    .pill{
+      display:flex; gap:10px; align-items:center;
+      padding: 10px 12px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      box-shadow: 0 10px 28px rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-size: 12.5px;
+      color: var(--muted);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .pill strong{ color: var(--text); font-weight: 950; }
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-family: var(--font);
+      font-weight: 950;
+      font-size: 12.5px;
+      letter-spacing: .01em;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      box-shadow: 0 12px 30px rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      white-space: nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.28); }
+    .btn:active{ transform: translateY(0) scale(.99); }
+    .btn.primary{
+      border-color: rgba(255,204,0,.40);
+      background: linear-gradient(135deg, rgba(255,204,0,.22), rgba(0,160,255,.14));
+    }
+    .btn.danger{
+      border-color: rgba(255,90,130,.38);
+      background: rgba(255,90,130,.10);
+    }
+
+    /* Layout */
+    .grid{ display:grid; grid-template-columns: 1fr; gap: var(--gap); }
+    @media (min-width: 1060px){ .grid{ grid-template-columns: 0.95fr 1.35fr; align-items:start; } }
+
+    .card{
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.26);
+      border-radius: var(--r1);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .hd{
+      padding: 16px 16px 12px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,204,0,.10), rgba(255,255,255,.02));
+    }
+    .hd h2{
+      margin:0;
+      font-size: 14px;
+      font-weight: 950;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+    .hd .sub{
+      color: var(--muted2);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .bd{ padding: 14px 16px 16px; }
+
+    /* Sections */
+    .row{ display:flex; gap:10px; flex-wrap:wrap; }
+    .chip{
+      flex: 1 1 240px; min-width: 240px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--r2);
+      background: rgba(255,255,255,.06);
+      position: relative;
+      overflow:hidden;
+    }
+    .chip::before{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(90deg, rgba(255,204,0,.10), transparent 45%, rgba(0,160,255,.08));
+      opacity: .75;
+      pointer-events:none;
+    }
+    .role{ position:relative; font-size: 11px; letter-spacing:.12em; text-transform: uppercase; color: rgba(255,255,255,.72); font-weight: 950; }
+    .name{ position:relative; margin-top: 6px; font-size: 16px; font-weight: 950; }
+    .note{ position:relative; margin-top: 4px; font-size: 12px; color: var(--muted); line-height: 1.35; font-weight: 650; }
+
+    /* Toolbar */
+    .toolbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom: 12px; }
+    .search{
+      flex: 1 1 320px; min-width: 220px;
+      display:flex; gap:10px; align-items:center;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+    }
+    .search input{
+      width:100%; background:transparent; border:none; outline:none;
+      color: var(--text); font-family: var(--font);
+      font-weight: 900; font-size: 13px;
+    }
+    .search input::placeholder{ color: rgba(255,255,255,.52); }
+    .select{
+      display:flex; gap:8px; align-items:center;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-weight: 950;
+      font-size: 12.5px;
+    }
+    .select select{
+      background:transparent; border:none; outline:none;
+      color: var(--text);
+      font-family: var(--font);
+      font-weight: 950;
+      cursor:pointer;
+    }
+    .select option{ color:#111; }
+
+    /* Insights */
+    .insights{ display:grid; gap: 10px; grid-template-columns: 1fr; margin-bottom: 12px; }
+    @media (min-width: 720px){ .insights{ grid-template-columns: 1fr 1fr 1fr; } }
+    .mini{
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--r2);
+      background: rgba(255,255,255,.06);
+      padding: 12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .mini::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(420px 120px at 20% 0%, rgba(255,204,0,.18), transparent 60%),
+        radial-gradient(420px 140px at 90% 10%, rgba(0,160,255,.14), transparent 65%);
+      opacity: .85;
+      pointer-events:none;
+    }
+    .mini .k{ position:relative; color: rgba(255,255,255,.70); font-size: 11px; font-weight: 950; letter-spacing:.12em; text-transform: uppercase; }
+    .mini .v{ position:relative; margin-top: 6px; font-size: 14px; font-weight: 950; line-height: 1.35; }
+    .mini .s{ position:relative; margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 750; }
+
+    /* Komunal weight panel */
+    .komunalGrid{ display:grid; gap:10px; grid-template-columns: 1fr; }
+    @media (min-width: 700px){ .komunalGrid{ grid-template-columns: 1fr 1fr 1fr; } }
+
+    .komunalCard{
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: var(--r2);
+      background: rgba(0,0,0,.18);
+      padding: 12px;
+      position: relative;
+      overflow:hidden;
+    }
+    .komunalCard::before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(420px 140px at 30% 0%, rgba(255,204,0,.16), transparent 65%);
+      opacity:.8;
+      pointer-events:none;
+    }
+    .komunalCard h3{
+      position:relative;
+      margin:0;
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing:.02em;
+    }
+    .komunalCard p{
+      position:relative;
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+    .weightLine{ position:relative; margin-top:10px; display:flex; align-items:center; gap:10px; }
+    .bar{
+      position:relative;
+      flex:1 1 auto;
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+    }
+    .bar > i{
+      position:absolute; inset:0;
+      width: calc(var(--p) * 1%);
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(255,204,0,.95), rgba(0,160,255,.85));
+      box-shadow: 0 14px 34px rgba(255,204,0,.10);
+    }
+    .pct{
+      min-width:56px;
+      text-align:right;
+      font-size:12px;
+      color: var(--muted);
+      font-weight: 950;
+    }
+
+    /* Divisions */
+    .divisions{ display:grid; gap: 12px; }
+    .division{
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: var(--r2);
+      background: rgba(255,255,255,.06);
+      overflow:hidden;
+    }
+    .divisionTop{
+      padding: 12px 12px 10px;
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+      background: linear-gradient(180deg, rgba(255,204,0,.10), rgba(0,0,0,.00));
+    }
+    .divisionTop h3{ margin:0; font-size: 14px; font-weight: 980; letter-spacing:.01em; }
+    .meta{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; color: var(--muted2); font-size: 12px; font-weight: 900; }
+    .badge{
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      background: rgba(0,0,0,.18);
+      white-space: nowrap;
+    }
+    .badge.dot::before{
+      content:"";
+      display:inline-block; width:8px; height:8px; border-radius:999px;
+      margin-right:8px; background: rgba(255,255,255,.28); vertical-align: middle;
+    }
+    .badge.dot.ok::before{ background: rgba(90,255,170,.90); }
+    .badge.dot.warn::before{ background: rgba(255,204,0,.95); }
+    .badge.dot.bad::before{ background: rgba(255,90,130,.92); }
+
+    .details{
+      padding: 0 12px 12px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      display:grid; gap:10px; grid-template-columns: 1fr;
+    }
+    @media (min-width: 900px){ .details{ grid-template-columns: 1fr 1fr; } }
+    .item{
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      padding: 10px;
+    }
+    .item .k{
+      color: rgba(255,255,255,.70);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+    }
+    .item .v{
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+    .wide{ grid-column: 1 / -1; }
+    .muted{ color: var(--muted); font-weight: 700; }
+
+    /* Jobdesk box */
+    .jobdesk{
+      margin-top:10px;
+      display:grid;
+      gap:8px;
+    }
+    .job{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,.05);
+      padding: 10px;
+    }
+    .job .t{ font-weight: 950; font-size: 12px; letter-spacing:.08em; text-transform: uppercase; color: rgba(255,255,255,.82); }
+    .job ul{ margin:8px 0 0 18px; padding:0; color: var(--muted); font-weight: 700; font-size: 12px; line-height:1.45; }
+    .job li{ margin: 4px 0; }
+
+    /* Komunal progress form per division */
+    .kTabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .tabBtn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.86);
+      padding: 8px 10px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-family: var(--font);
+      font-weight: 950;
+      font-size: 12px;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .tabBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.24); }
+    .tabBtn.active{
+      border-color: rgba(255,204,0,.40);
+      background: rgba(255,204,0,.10);
+    }
+
+    .kPanel{
+      margin-top:10px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      padding: 10px;
+    }
+
+    .kGrid{
+      display:grid;
+      gap:10px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 720px){ .kGrid{ grid-template-columns: 1fr 1fr; } }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .field label{
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.70);
+    }
+    .field input, .field textarea{
+      width:100%;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 9px 10px;
+      font-family: var(--font);
+      font-weight: 850;
+      font-size: 13px;
+      outline:none;
+    }
+    .field textarea{ resize: vertical; min-height: 74px; font-weight: 750; }
+    .field input::placeholder, .field textarea::placeholder{ color: rgba(255,255,255,.52); }
+
+    .kFooter{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .smallNote{ color: rgba(255,255,255,.62); font-size: 12px; font-weight: 750; line-height: 1.35; }
+
+    /* Computed progress box */
+    .progressBox{
+      margin-top: 10px;
+      display:grid;
+      gap: 8px;
+    }
+    .progressLine{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .progressLine .bar{ flex: 1 1 280px; }
+
+    .foot{
+      margin-top: 12px;
+      color: rgba(255,255,255,.56);
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    @media print{
+      .bg, .pattern, .grain, .actions, .toolbar, .kTabs, .kFooter, .btn, .btnSm, .tabBtn { display:none !important; }
+      body{ background:#fff; color:#111; }
+      .card{ box-shadow:none; background:#fff; border-color:#ddd; }
+      .division, .chip, .item, .mini, .komunalCard, .kPanel, .job{ background:#fff; border-color:#ddd; }
+      .muted, .foot, .note, .badge{ color:#444; }
+      .bar{ background:#eee; border-color:#ddd; }
+      .bar > i{ box-shadow:none; }
+      .field input, .field textarea{ border-color:#ddd; background:#fff; color:#111; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="pattern" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <!-- Simpan logo kamu sebagai pmii-logo.jpg di folder yang sama -->
+        <div class="logoBox" title="PMII">
+          <img src="bg.jpeg"Logo PMII" />
+        </div>
+        <div>
+          <h1>
+            Dashboard OC PKD • Rayon Adab dan Humaniora
+            <span class="badgeInline">Komisariat UINSA Surabaya</span>
+          </h1>
+          <p>Progress rapat komunal 1–3 berbobot (50% / 30% / 20%) + ruang laporan “sudah/ belum”.</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="pill"><span>Rata-rata progress</span> <strong id="avgProgress">0%</strong></div>
+        <div class="pill"><span>Divisi overdue</span> <strong id="overdueDivs">0</strong></div>
+        <button class="btn primary" id="exportBtn" type="button">Export CSV</button>
+        <button class="btn" id="printBtn" type="button">Cetak / PDF</button>
+        <button class="btn danger" id="resetBtn" type="button">Reset</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <section class="card">
+        <div class="hd">
+          <h2>Struktural PKD</h2>
+          <div class="sub">BPH + Bobot Komunal</div>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div class="chip">
+              <div class="role">Ketua</div>
+              <div class="name">Aminullah</div>
+              <div class="note">Koordinasi dengan Manager SC & Manager Acara, kontrol semua divisi, keputusan final. (Jobdesk file)</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="chip">
+              <div class="role">Sekretaris 1</div>
+              <div class="name">Maya</div>
+              <div class="note">Notulen, surat-menyurat (izin/undangan/peminjaman), proposal, LPJ, stempel. (Jobdesk file)</div>
+            </div>
+            <div class="chip">
+              <div class="role">Sekretaris 2</div>
+              <div class="name">Shella</div>
+              <div class="note">Backup administrasi + operasional sekretariat.</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="chip">
+              <div class="role">Bendahara 1</div>
+              <div class="name">Jessica</div>
+              <div class="note">Kwitansi, buku kas, RAB, sirkulasi pemasukan-pengeluaran, bukti pengeluaran. (Jobdesk file)</div>
+            </div>
+            <div class="chip">
+              <div class="role">Bendahara 2</div>
+              <div class="name">Miftah</div>
+              <div class="note">Support pencatatan & bukti transaksi. Uang boleh jalan, bukti wajib ikut.</div>
+            </div>
+          </div>
+
+          <div class="foot">
+            Bobot rapat komunal: <b>Komunal 1 = 50%</b>, <b>Komunal 2 = 30%</b>, <b>Komunal 3 = 20%</b>.
+            Progress divisi dihitung dari input masing-masing komunal. Data tersimpan di browser.
+          </div>
+
+          <div class="jobdesk">
+            <div class="job">
+              <div class="t">Sumber jobdesk</div>
+              <ul>
+                <li>Jobdesk Ketua/Sekretaris/Bendahara + jobdesk tiap divisi diambil dari PDF yang kamu upload.</li>
+              </ul>
+              <div class="foot">Referensi: 0</div>
+            </div>
+          </div>
+
+          <div class="jobdesk" style="margin-top:12px;">
+            <div class="job">
+              <div class="t">Bobot komunal (tetap)</div>
+              <div class="komunalGrid" style="margin-top:10px;">
+                <div class="komunalCard">
+                  <h3>Komunal 1</h3>
+                  <p>Biasanya fokus: pondasi, timeline, pembagian kerja, start eksekusi.</p>
+                  <div class="weightLine">
+                    <div class="bar" style="--p:50"><i></i></div>
+                    <div class="pct">50%</div>
+                  </div>
+                </div>
+                <div class="komunalCard">
+                  <h3>Komunal 2</h3>
+                  <p>Biasanya fokus: progres inti, follow-up, konfirmasi kebutuhan.</p>
+                  <div class="weightLine">
+                    <div class="bar" style="--p:30"><i></i></div>
+                    <div class="pct">30%</div>
+                  </div>
+                </div>
+                <div class="komunalCard">
+                  <h3>Komunal 3</h3>
+                  <p>Biasanya fokus: finalisasi, mitigasi risiko, readiness check.</p>
+                  <div class="weightLine">
+                    <div class="bar" style="--p:20"><i></i></div>
+                    <div class="pct">20%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="card">
+        <div class="hd">
+          <h2>Progress OC per Divisi</h2>
+          <div class="sub">Komunal 1–3 + Jobdesk + Laporan</div>
+        </div>
+
+        <div class="bd">
+          <div class="toolbar">
+            <div class="search" role="search">
+              <span aria-hidden="true">⌕</span>
+              <input id="searchInput" type="search" placeholder="Cari divisi / koor / anggota / jobdesk / laporan..." />
+            </div>
+
+            <div class="select">
+              <span>Sort:</span>
+              <select id="sortSelect">
+                <option value="default">Default</option>
+                <option value="progressDesc">Progress tertinggi</option>
+                <option value="progressAsc">Progress terendah</option>
+                <option value="overdueDesc">Overdue terbanyak</option>
+                <option value="nameAsc">Nama A-Z</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="insights">
+            <div class="mini">
+              <div class="k">Divisi teratas</div>
+              <div class="v" id="topDivision">-</div>
+              <div class="s" id="topDivisionSub">-</div>
+            </div>
+            <div class="mini">
+              <div class="k">Butuh perhatian</div>
+              <div class="v" id="lowDivision">-</div>
+              <div class="s" id="lowDivisionSub">-</div>
+            </div>
+            <div class="mini">
+              <div class="k">Deadline terdekat</div>
+              <div class="v" id="nearestGlobal">-</div>
+              <div class="s" id="nearestGlobalSub">-</div>
+            </div>
+          </div>
+
+          <div class="divisions" id="divisions"></div>
+
+          <div class="foot">
+            “Sampai komunal 3 masih 0%” itu bukan krisis, itu minta dipeluk sama timeline.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <template id="divisionTpl">
+    <article class="division" data-key="">
+      <div class="divisionTop">
+        <div>
+          <h3 class="divName"></h3>
+          <div class="meta">
+            <span class="badge koorBadge"></span>
+            <span class="badge membersCount"></span>
+            <span class="badge dot statusPill"><span class="statusText"></span></span>
+          </div>
+        </div>
+        <div class="meta">
+          <span class="badge">Progress: <span class="totalPct"></span>%</span>
+          <span class="badge">Overdue: <span class="overdueCount"></span></span>
+        </div>
+      </div>
+
+      <div class="details">
+        <div class="item">
+          <div class="k">Koordinator</div>
+          <div class="v koor"></div>
+        </div>
+        <div class="item">
+          <div class="k">Anggota</div>
+          <div class="v members"></div>
+        </div>
+
+        <div class="item wide">
+          <div class="k">Progress komunal (50/30/20)</div>
+          <div class="muted">Isi % per komunal + jelaskan yang sudah/belum dikerjakan. Ini bahan rapat.</div>
+
+          <div class="progressBox">
+            <div class="progressLine">
+              <div style="min-width:120px; font-weight:950; color:rgba(255,255,255,.86);">Komunal 1</div>
+              <div class="bar" style="--p:0"><i></i></div>
+              <div class="pct k1Pct">0%</div>
+            </div>
+            <div class="progressLine">
+              <div style="min-width:120px; font-weight:950; color:rgba(255,255,255,.86);">Komunal 2</div>
+              <div class="bar" style="--p:0"><i></i></div>
+              <div class="pct k2Pct">0%</div>
+            </div>
+            <div class="progressLine">
+              <div style="min-width:120px; font-weight:950; color:rgba(255,255,255,.86);">Komunal 3</div>
+              <div class="bar" style="--p:0"><i></i></div>
+              <div class="pct k3Pct">0%</div>
+            </div>
+            <div class="progressLine" style="margin-top:4px;">
+              <div style="min-width:120px; font-weight:950; color:rgba(255,204,0,.95);">Total (bobot)</div>
+              <div class="bar" style="--p:0"><i></i></div>
+              <div class="pct totalPctLine">0%</div>
+              <div class="smallNote">= 0.5·K1 + 0.3·K2 + 0.2·K3</div>
+            </div>
+          </div>
+
+          <div class="kTabs">
+            <button class="tabBtn active" data-tab="k1" type="button">Komunal 1</button>
+            <button class="tabBtn" data-tab="k2" type="button">Komunal 2</button>
+            <button class="tabBtn" data-tab="k3" type="button">Komunal 3</button>
+          </div>
+
+          <div class="kPanel">
+            <div class="kGrid">
+              <div class="field">
+                <label>Persentase komunal (0–100)</label>
+                <input class="kPct" type="number" min="0" max="100" step="1" placeholder="contoh: 50" />
+              </div>
+              <div class="field">
+                <label>Deadline terdekat (opsional)</label>
+                <input class="deadline" type="date" />
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label>Yang sudah dikerjakan</label>
+                <textarea class="doneText" placeholder="Tuliskan poin-poin yang sudah selesai, termasuk bukti/link kalau ada."></textarea>
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label>Yang belum / kendala / kebutuhan</label>
+                <textarea class="todoText" placeholder="Tuliskan yang belum, kendala, dan kebutuhan bantuan (SC/OC/divisi lain)."></textarea>
+              </div>
+            </div>
+
+            <div class="kFooter">
+              <div class="smallNote">
+                Catatan: input ini khusus bahan rapat. Kalau belum 100%, bukan dosa, tapi tolong ada plan.
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+                <button class="btn primary saveBtn" type="button">Simpan</button>
+                <button class="btn danger clearBtn" type="button">Kosongkan tab ini</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="jobdesk" style="margin-top:12px;">
+            <div class="job">
+              <div class="t">Jobdesk divisi (ringkas)</div>
+              <ul class="jobList"></ul>
+              <div class="foot">Detail jobdesk: 1</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    // ========= CONFIG =========
+    const BACKGROUND_URL = "https://share.google/PArLklennAWwcY9cp";
+    document.documentElement.style.setProperty("--bgimg", `url("${BACKGROUND_URL}")`);
+
+    // Simpan logo sebagai pmii-logo.jpg di folder yang sama (atau ubah src di HTML).
+    const STORAGE_KEY = "pkd_oc_pmii_komunal_weighted_v1";
+
+    // Komunal weights
+    const WEIGHTS = { k1: 0.5, k2: 0.3, k3: 0.2 };
+
+    // ========= DATA: Struktur OC per divisi (sesuai pesan kamu) =========
+    const divisionsDefault = [
+      { key:"proto", name:"Protokol", koor:"Ahmad Bukhori", members:["Aje","Hilya","Aqil","Cantika","Icha"] },
+      { key:"kesehatan", name:"Kesehatan", koor:"Vivi", members:["Arzaki","Ilmi","Anin"] },
+      { key:"konsumsi", name:"Konsumsi", koor:"Ali", members:["Akbar","Rifqi","Nabila","Izza","Zidah"] },
+      { key:"humas", name:"Humas", koor:"Farel", members:["Rahman","Affan","Jibril","Ilham","Hasbi","Rama"] },
+      { key:"keamanan", name:"Keamanan", koor:"Bassam", members:["Dipta","Akmal","Ersta","Dinda","Aliya"] },
+      { key:"ksk", name:"KSK", koor:"Ilham", members:["Shovia","Anna","Om Satria","Liyaa","Annisa"] },
+      { key:"pj", name:"PJ Kelompok & Rekrutmen", koor:"Hariroh", members:["Siska","Firda","Auliya","Habibah","Misfah","Raihan","Fahmi Sahal","Faza"] },
+      { key:"dpa", name:"DPA", koor:"Firman", members:["Rifzal","Alan","Fahmi Jimin","Ahmad","Dzulfikar Ali","Akmal"] },
+      /* Tambahan divisi dari jobdesk PDF: Kesekretariatan (kalau kamu memang ada divisinya) */
+      { key:"kesekretariatan", name:"Kesekretariatan", koor:"Maya / Shella", members:["(isi sesuai kebutuhan)"] },
+    ];
+
+    // ========= JOBDESK (ringkas dari PDF) =========
+    // Dirangkum agar enak dibaca saat rapat.
+    const jobdesk = {
+      proto: [
+        "Pembagian MC/Ice Breaker berbasis rundown (shift pagi/siang/malam).",
+        "Mengatur & mengkondisikan jalannya acara, standby sesuai waktu.",
+        "Membuat yel-yel & jargon selaras tema (tanpa SARA).",
+        "Instruktur senam + siapkan musik.",
+        "Koordinasi dengan Korlap.",
+        "Siapkan Ice Breaking sesuai situasi."
+      ],
+      kesekretariatan: [
+        "Pamflet & video coming soon PKD 2026.",
+        "Pamflet H-acara, foto pemateri, pamflet acara (timeline menyesuaikan).",
+        "Link pendaftaran G-Form + laporan perkembangan peserta ke SC.",
+        "Desain & cetak banner tema, photobooth, selamat datang, sertifikat.",
+        "Sertifikat + figura pemateri.",
+        "Absensi peserta/panitia/tamu/pemateri.",
+        "Cetak modul peserta (koordinasi Manager Materi).",
+        "Cetak rundown (koordinasi Manager Acara).",
+        "Desain petunjuk lokasi & denah (koordinasi DPA & Humas) + tempelan per-ruang."
+      ],
+      humas: [
+        "Menemukan tempat & melaporkan hasil survey.",
+        "Siapkan transportasi peserta.",
+        "Antar surat: proposal/undangan/peminjaman/perizinan (setelah sekretaris selesai).",
+        "Sambut & damping tamu undangan."
+      ],
+      konsumsi: [
+        "Atur konsumsi peserta, panitia, pengisi acara, senior, tamu.",
+        "Siapkan menu (ringan/berat) + penjadwalan.",
+        "Menyiapkan kebutuhan konsumsi & pembiayaan konsumsi.",
+        "Tentukan sumbangan tiap panitia (OC/SC/Rayon & divisinya).",
+        "Tahu pasar terdekat (koordinasi Humas)."
+      ],
+      keamanan: [
+        "Buat pos-pos keamanan + sistem shift (koordinasi Humas).",
+        "Kondisikan peserta sebelum/sesudah forum.",
+        "Jaga kondusifitas kegiatan acara.",
+        "Kuasai denah wilayah tempat acara.",
+        "Jaga keamanan seluruh tempat.",
+        "Pimpin kontrak forum & kontrak acara bersama SC.",
+        "Menjadi sosok yang (secukupnya) ditakuti peserta."
+      ],
+      dpa: [
+        "Sediakan peralatan/perlengkapan lintas divisi.",
+        "Koordinir list barang: tersedia/pinjam/beli.",
+        "Dekorasi ruangan (indoor/outdoor) koordinasi SC.",
+        "Dokumentasi pra-acara/acara/pasca.",
+        "Publikasi hasil dokumentasi (koordinasi KSK).",
+        "Jaga & kembalikan barang terpinjam."
+      ],
+      kesehatan: [
+        "Siapkan obat-obatan + ruang kesehatan (koordinasi DPA & Humas).",
+        "P3K bila terjadi kecelakaan.",
+        "Standby selama forum (shift).",
+        "Tahu puskesmas/RS terdekat (koordinasi Humas).",
+        "Koordinasi dengan PJ jika peserta sakit."
+      ],
+      pj: [
+        "Koordinir rekrutmen peserta.",
+        "Bagi & beri nama kelompok (koordinasi KSK) dan pantau peserta terdaftar (deadline Komunal 1).",
+        "Dampingi & awasi peserta.",
+        "Tentukan waktu meeting kelompok pra H.",
+        "Koordinasi panitia–peserta.",
+        "Bantu SC mendekatkan diri ke calon peserta sejak jauh hari.",
+        "Jaga anggota kelompok."
+      ],
+      ksk: [
+        "Koordinasi perkembangan peserta terdaftar bareng PJ.",
+        "Koordinasi publikasi dokumentasi bareng DPA (bila dibutuhkan)."
+      ]
+    };
+
+    // ========= DOM =========
+    const $divisions = document.getElementById("divisions");
+    const $tpl = document.getElementById("divisionTpl");
+
+    const $search = document.getElementById("searchInput");
+    const $sort = document.getElementById("sortSelect");
+    const $avg = document.getElementById("avgProgress");
+    const $overdueDivs = document.getElementById("overdueDivs");
+    const $export = document.getElementById("exportBtn");
+    const $print = document.getElementById("printBtn");
+    const $reset = document.getElementById("resetBtn");
+
+    const $top = document.getElementById("topDivision");
+    const $topSub = document.getElementById("topDivisionSub");
+    const $low = document.getElementById("lowDivision");
+    const $lowSub = document.getElementById("lowDivisionSub");
+    const $nearestG = document.getElementById("nearestGlobal");
+    const $nearestGSub = document.getElementById("nearestGlobalSub");
+
+    // ========= STATE =========
+    function todayISO(){
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+    const TODAY = todayISO();
+
+    function clampPct(n){
+      const x = Number.isFinite(n) ? n : 0;
+      return Math.max(0, Math.min(100, Math.round(x)));
+    }
+
+    function defaultKomunalState(){
+      return {
+        k1: { pct: 0, deadline: "", done: "", todo: "" },
+        k2: { pct: 0, deadline: "", done: "", todo: "" },
+        k3: { pct: 0, deadline: "", done: "", todo: "" }
+      };
+    }
+
+    function loadState(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw){
+        const seeded = divisionsDefault.map(d => ({
+          key: d.key,
+          komunal: defaultKomunalState()
+        }));
+        saveState(seeded);
+        return seeded;
+      }
+      try{
+        const parsed = JSON.parse(raw);
+        const map = new Map(parsed.map(x => [x.key, x]));
+        return divisionsDefault.map(d => {
+          const old = map.get(d.key);
+          const kom = old?.komunal || {};
+          const safe = defaultKomunalState();
+          for(const k of ["k1","k2","k3"]){
+            safe[k].pct = clampPct(Number(kom?.[k]?.pct ?? 0));
+            safe[k].deadline = String(kom?.[k]?.deadline ?? "");
+            safe[k].done = String(kom?.[k]?.done ?? "");
+            safe[k].todo = String(kom?.[k]?.todo ?? "");
+          }
+          return { key: d.key, komunal: safe };
+        });
+      }catch{
+        const seeded = divisionsDefault.map(d => ({ key: d.key, komunal: defaultKomunalState() }));
+        saveState(seeded);
+        return seeded;
+      }
+    }
+
+    function saveState(stateArr){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateArr));
+    }
+
+    let state = loadState();
+
+    function getDivState(key){
+      return state.find(x => x.key === key) || { key, komunal: defaultKomunalState() };
+    }
+    function setDivState(key, komunal){
+      const idx = state.findIndex(x => x.key === key);
+      if(idx >= 0) state[idx] = { key, komunal };
+      else state.push({ key, komunal });
+      saveState(state);
+    }
+
+    // ========= COMPUTE =========
+    function weightedTotal(kom){
+      const k1 = clampPct(Number(kom.k1.pct));
+      const k2 = clampPct(Number(kom.k2.pct));
+      const k3 = clampPct(Number(kom.k3.pct));
+      const total = (WEIGHTS.k1 * k1) + (WEIGHTS.k2 * k2) + (WEIGHTS.k3 * k3);
+      return Math.round(total);
+    }
+
+    function nearestDeadline(kom){
+      const dates = ["k1","k2","k3"]
+        .map(k => kom[k].deadline)
+        .filter(Boolean)
+        .sort();
+      return dates[0] || "";
+    }
+
+    function isOverdue(kom){
+      const nd = nearestDeadline(kom);
+      if(!nd) return false;
+      // overdue kalau masih total < 100 dan deadline lewat hari ini
+      return (weightedTotal(kom) < 100) && (nd < TODAY);
+    }
+
+    function statusBadge(total, overdue){
+      if(total >= 100) return { label:"Selesai", cls:"ok" };
+      if(overdue) return { label:"Overdue", cls:"bad" };
+      if(total >= 70) return { label:"On Track", cls:"ok" };
+      if(total >= 35) return { label:"In Progress", cls:"warn" };
+      if(total > 0) return { label:"Kickoff", cls:"warn" };
+      return { label:"Belum Mulai", cls:"" };
+    }
+
+    function avgProgressAll(){
+      const totals = divisionsDefault.map(d => weightedTotal(getDivState(d.key).komunal));
+      const sum = totals.reduce((a,b)=>a+b,0);
+      return totals.length ? Math.round(sum / totals.length) : 0;
+    }
+
+    function countOverdueDivs(){
+      return divisionsDefault.reduce((a,d)=> a + (isOverdue(getDivState(d.key).komunal) ? 1 : 0), 0);
+    }
+
+    function globalNearestDeadline(){
+      const candidates = [];
+      for(const d of divisionsDefault){
+        const kom = getDivState(d.key).komunal;
+        for(const k of ["k1","k2","k3"]){
+          if(kom[k].deadline){
+            candidates.push({
+              due: kom[k].deadline,
+              div: d.name,
+              komunal: k.toUpperCase(),
+              pct: clampPct(Number(kom[k].pct)),
+            });
+          }
+        }
+      }
+      candidates.sort((a,b)=> a.due.localeCompare(b.due));
+      return candidates[0] || null;
+    }
+
+    function updateInsights(){
+      const scored = divisionsDefault.map(d => {
+        const kom = getDivState(d.key).komunal;
+        const total = weightedTotal(kom);
+        const overdue = isOverdue(kom);
+        return { d, total, overdue };
+      });
+
+      const top = [...scored].sort((a,b)=> b.total - a.total)[0];
+      const low = [...scored].sort((a,b)=> a.total - b.total)[0];
+
+      document.getElementById("avgProgress").textContent = `${avgProgressAll()}%`;
+      document.getElementById("overdueDivs").textContent = `${countOverdueDivs()}`;
+
+      if(top){
+        $top.textContent = `Divisi ${top.d.name}`;
+        $topSub.textContent = `${top.total}% • Koor: ${top.d.koor}`;
+      }
+      if(low){
+        $low.textContent = `Divisi ${low.d.name}`;
+        $lowSub.textContent = `${low.total}% • Koor: ${low.d.koor}`;
+      }
+
+      const near = globalNearestDeadline();
+      if(!near){
+        $nearestG.textContent = "-";
+        $nearestGSub.textContent = "-";
+      }else{
+        $nearestG.textContent = near.due;
+        $nearestGSub.textContent = `${near.div} • ${near.komunal} • input ${near.pct}%`;
+      }
+    }
+
+    // ========= RENDER =========
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[m]));
+    }
+
+    function render(){
+      $divisions.innerHTML = "";
+      const q = ($search.value || "").trim().toLowerCase();
+      const mode = $sort.value;
+
+      // build list with computed metrics
+      let list = divisionsDefault.map(d => {
+        const st = getDivState(d.key).komunal;
+        const total = weightedTotal(st);
+        const overdue = isOverdue(st);
+        const nd = nearestDeadline(st);
+        return { d, st, total, overdue, nd };
+      });
+
+      // filter by query (name/koor/anggota/jobdesk/done/todo texts)
+      list = list.filter(x => {
+        if(!q) return true;
+        const jd = (jobdesk[x.d.key] || jobdeskMapFallback(x.d.key) || []).join(" ");
+        const texts = ["k1","k2","k3"].map(k => `${x.st[k].done} ${x.st[k].todo}`).join(" ");
+        const hay = [
+          x.d.name, x.d.koor, x.d.members.join(" "),
+          jd,
+          texts
+        ].join(" ").toLowerCase();
+        return hay.includes(q);
+      });
+
+      // sort
+      if(mode === "progressDesc") list.sort((a,b)=> b.total - a.total);
+      if(mode === "progressAsc") list.sort((a,b)=> a.total - b.total);
+      if(mode === "overdueDesc") list.sort((a,b)=> (b.overdue - a.overdue) || (a.total - b.total));
+      if(mode === "nameAsc") list.sort((a,b)=> a.d.name.localeCompare(b.d.name, "id"));
+
+      list.forEach(({d, st, total, overdue, nd}) => {
+        const node = $tpl.content.cloneNode(true);
+        const root = node.querySelector(".division");
+        root.dataset.key = d.key;
+
+        node.querySelector(".divName").textContent = `Divisi ${d.name}`;
+        node.querySelector(".koorBadge").textContent = `Koor: ${d.koor}`;
+        node.querySelector(".membersCount").textContent = `Anggota: ${d.members.length}`;
+        node.querySelector(".koor").textContent = d.koor;
+        node.querySelector(".members").textContent = d.members.join(", ");
+
+        node.querySelector(".totalPct").textContent = total;
+        node.querySelector(".overdueCount").textContent = overdue ? "1" : "0";
+
+        // status pill
+        const pill = node.querySelector(".statusPill");
+        const statusText = node.querySelector(".statusText");
+        const sb = statusBadge(total, overdue);
+        pill.classList.remove("ok","warn","bad");
+        if(sb.cls) pill.classList.add(sb.cls);
+        statusText.textContent = sb.label;
+
+        // progress bars (k1/k2/k3/total)
+        const k1 = clampPct(Number(st.k1.pct));
+        const k2 = clampPct(Number(st.k2.pct));
+        const k3 = clampPct(Number(st.k3.pct));
+
+        const bars = node.querySelectorAll(".progressLine .bar");
+        // order: k1,k2,k3,total
+        bars[0].style.setProperty("--p", k1);
+        bars[1].style.setProperty("--p", k2);
+        bars[2].style.setProperty("--p", k3);
+        bars[3].style.setProperty("--p", total);
+
+        node.querySelector(".k1Pct").textContent = `${k1}%`;
+        node.querySelector(".k2Pct").textContent = `${k2}%`;
+        node.querySelector(".k3Pct").textContent = `${k3}%`;
+        node.querySelector(".totalPctLine").textContent = `${total}%`;
+
+        // jobdesk list
+        const jobList = node.querySelector(".jobList");
+        const jds = jobdesk[d.key] || jobdeskMapFallback(d.key) || ["(Jobdesk belum di-set untuk divisi ini)"];
+        jobList.innerHTML = jds.map(x => `<li>${escapeHtml(x)}</li>`).join("");
+
+        // tabs + panel binding
+        const tabBtns = [...node.querySelectorAll(".tabBtn")];
+        const panel = node.querySelector(".kPanel");
+        const pctInput = node.querySelector(".kPct");
+        const deadlineInput = node.querySelector(".deadline");
+        const doneText = node.querySelector(".doneText");
+        const todoText = node.querySelector(".todoText");
+        const saveBtn = node.querySelector(".saveBtn");
+        const clearBtn = node.querySelector(".clearBtn");
+
+        let activeTab = "k1";
+
+        function loadTab(tab){
+          activeTab = tab;
+          tabBtns.forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+
+          pctInput.value = clampPct(Number(st[tab].pct));
+          deadlineInput.value = st[tab].deadline || "";
+          doneText.value = st[tab].done || "";
+          todoText.value = st[tab].todo || "";
+        }
+
+        tabBtns.forEach(btn => {
+          btn.addEventListener("click", () => loadTab(btn.dataset.tab));
+        });
+
+        saveBtn.addEventListener("click", () => {
+          st[activeTab].pct = clampPct(Number(pctInput.value));
+          st[activeTab].deadline = String(deadlineInput.value || "");
+          st[activeTab].done = String(doneText.value || "");
+          st[activeTab].todo = String(todoText.value || "");
+          setDivState(d.key, st);
+          render();
+        });
+
+        clearBtn.addEventListener("click", () => {
+          st[activeTab] = { pct: 0, deadline: "", done: "", todo: "" };
+          setDivState(d.key, st);
+          render();
+        });
+
+        // initialize
+        loadTab("k1");
+
+        $divisions.appendChild(node);
+      });
+
+      updateInsights();
+    }
+
+    function jobdeskMapFallback(key){
+      // fallback mapping for similar naming
+      if(key === "kesehatan") return jobdesk.kesehatan;
+      return null;
+    }
+
+    // ========= EXPORT =========
+    function exportCSV(){
+      const rows = [];
+      rows.push([
+        "Divisi","Koor","Anggota",
+        "K1_pct","K1_deadline","K1_sudah","K1_belum",
+        "K2_pct","K2_deadline","K2_sudah","K2_belum",
+        "K3_pct","K3_deadline","K3_sudah","K3_belum",
+        "Total_weighted","Nearest_deadline","Overdue"
+      ].join(","));
+
+      for(const d of divisionsDefault){
+        const st = getDivState(d.key).komunal;
+        const total = weightedTotal(st);
+        const nd = nearestDeadline(st);
+        const od = isOverdue(st) ? "Yes" : "No";
+        rows.push(csvRow([
+          `Divisi ${d.name}`, d.koor, d.members.join(" | "),
+          clampPct(Number(st.k1.pct)), st.k1.deadline, st.k1.done, st.k1.todo,
+          clampPct(Number(st.k2.pct)), st.k2.deadline, st.k2.done, st.k2.todo,
+          clampPct(Number(st.k3.pct)), st.k3.deadline, st.k3.done, st.k3.todo,
+          total, nd, od
+        ]));
+      }
+
+      const blob = new Blob([rows.join("\n")], { type:"text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `PKD_OC_PMII_Komunal_Progress_${todayISO()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvRow(arr){
+      return arr.map(v => `"${String(v ?? "").replace(/"/g,'""')}"`).join(",");
+    }
+
+    // ========= EVENTS =========
+    $search.addEventListener("input", () => render());
+    $sort.addEventListener("change", () => render());
+    $print.addEventListener("click", () => window.print());
+    $export.addEventListener("click", () => exportCSV());
+    $reset.addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      state = loadState();
+      render();
+    });
+
+    // ========= INIT =========
+    render();
+  </script>
+</body>
+</html>
