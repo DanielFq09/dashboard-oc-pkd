@@ -820,15 +820,40 @@
   </template>
 
   <script>
-    // ========= CONFIG =========
-    const BACKGROUND_URL = "https://share.google/PArLklennAWwcY9cp";
-    document.documentElement.style.setProperty("--bgimg", `url("${BACKGROUND_URL}")`);
+    // ===== CONFIG =====
+const API_URL = "https://script.google.com/macros/s/AKfycbyTparSSApYzuhH7wbEtM3KigMBGFv6FgKmw15QZREks7IZlkTWm-5ES2k0slvCzOOi1g/exec";
 
-    // Simpan logo sebagai pmii-logo.jpg di folder yang sama (atau ubah src di HTML).
-    const STORAGE_KEY = "pkd_oc_pmii_komunal_weighted_v1";
+// Background: lebih aman pakai file lokal biar pasti tampil
+const BACKGROUND_URL = "bg.jpeg";
+document.documentElement.style.setProperty("--bgimg", `url("${BACKGROUND_URL}")`);
 
-    // Komunal weights
-    const WEIGHTS = { k1: 0.5, k2: 0.3, k3: 0.2 };
+const STORAGE_KEY = "pkd_oc_pmii_komunal_weighted_v1";
+
+// Komunal weights
+const WEIGHTS = { k1: 0.5, k2: 0.3, k3: 0.2 };
+
+async function apiGetAll(){
+  const res = await fetch(API_URL, { method: "GET" });
+  return res.json(); // { ok:true, data:[...] }
+}
+
+async function apiPost(payload){
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+async function apiPost(payload){
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
 
     // ========= DATA: Struktur OC per divisi (sesuai pesan kamu) =========
     const divisionsDefault = [
@@ -1213,14 +1238,34 @@
           btn.addEventListener("click", () => loadTab(btn.dataset.tab));
         });
 
-        saveBtn.addEventListener("click", () => {
-          st[activeTab].pct = clampPct(Number(pctInput.value));
-          st[activeTab].deadline = String(deadlineInput.value || "");
-          st[activeTab].done = String(doneText.value || "");
-          st[activeTab].todo = String(todoText.value || "");
-          setDivState(d.key, st);
-          render();
-        });
+      saveBtn.addEventListener("click", async () => {
+  // 1) Ambil nilai dari input (punyamu sudah benar)
+  st[activeTab].pct = clampPct(Number(pctInput.value));
+  st[activeTab].deadline = String(deadlineInput.value || "");
+  st[activeTab].done = String(doneText.value || "");
+  st[activeTab].todo = String(todoText.value || "");
+
+  // 2) Simpan lokal dulu (biar tetap ada kalau internet putus)
+  setDivState(d.key, st);
+
+  // 3) POST ke Google Sheet (ini inti kolaboratifnya)
+  const komunalNum = activeTab === "k1" ? "1" : activeTab === "k2" ? "2" : "3";
+  try {
+    await apiPost({
+      divisi: d.key,                 // contoh: "keamanan"
+      komunal: komunalNum,           // "1" / "2" / "3"
+      progress: st[activeTab].pct,   // angka 0-100
+      sudah: st[activeTab].done,
+      belum: st[activeTab].todo,
+      pengisi: d.koor                // opsional, bisa ganti nama yang input
+    });
+  } catch (err) {
+    console.warn("Gagal POST ke Sheet, tersimpan lokal saja:", err);
+  }
+
+  // 4) Render ulang
+  render();
+});
 
         clearBtn.addEventListener("click", () => {
           st[activeTab] = { pct: 0, deadline: "", done: "", todo: "" };
@@ -1282,7 +1327,37 @@
     function csvRow(arr){
       return arr.map(v => `"${String(v ?? "").replace(/"/g,'""')}"`).join(",");
     }
+// ===== START: GOOGLE SHEET SYNC BUILD+REFRESH =====
+function emptyStateFromDivisions(){
+  return divisionsDefault.map(d => ({ key: d.key, komunal: defaultKomunalState() }));
+}
 
+function buildStateFromRows(rows){
+  const map = new Map(emptyStateFromDivisions().map(x => [x.key, x]));
+
+  for (const r of (rows || [])) {
+    const key = String(r.divisi || "").trim().toLowerCase();
+    if (!map.has(key)) continue;
+
+    const kom = String(r.komunal || "").trim();
+    const tab = kom === "1" ? "k1" : kom === "2" ? "k2" : kom === "3" ? "k3" : null;
+    if (!tab) continue;
+
+    const st = map.get(key).komunal;
+    st[tab].pct = clampPct(Number(r.progress || 0));
+    st[tab].done = String(r.sudah || "");
+    st[tab].todo = String(r.belum || "");
+  }
+
+  return [...map.values()];
+}
+
+async function refreshFromSheet(){
+  const json = await apiGetAll();
+  if (!json?.ok) throw new Error("GET API gagal");
+  state = buildStateFromRows(json.data);
+}
+// ===== END: GOOGLE SHEET SYNC BUILD+REFRESH =====
     // ========= EVENTS =========
     $search.addEventListener("input", () => render());
     $sort.addEventListener("change", () => render());
@@ -1294,8 +1369,16 @@
       render();
     });
 
-    // ========= INIT =========
-    render();
+    // ===== INIT =====
+(async () => {
+  try{
+    await refreshFromSheet(); // ambil data dari Google Sheet
+  }catch(e){
+    console.warn("Gagal load dari Sheet, fallback local:", e);
+    // kalau gagal, biarin state lama (local) lalu render
+  }
+  render();
+})();
   </script>
 </body>
 </html>
